@@ -11,59 +11,47 @@ def welcome():
         exit()
 
 
-def login_or_create():
-    intro = input("Would you like to [L]ogin or [C]reate a new account? ").lower()
-    if intro == "l":
-        login()
-    else:
-        new_user()
+def check_field(name, field):
+    with open("user_info.csv") as infile:
+        user_data = csv.DictReader(infile, fieldnames=["username", "password", "full_name", "fav_beer", "date_created"])
+        for user in user_data:
+            if name == user[field]:
+                return True
+        else:
+            return False
 
 
 def new_user():
     username = input("Enter a new username: ")
-
-    with open("user_info.csv") as infile:
-        user_data = csv.DictReader(infile, fieldnames=["username", "password", "full_name", "fav_color", "date_created"])
-        for user in user_data:
-            if username.lower() == user["username"].lower():
-                print("That is not a valid username, try again.")
-                new_user()
-
+    if check_field(username, "username") is True:
+        print(" ! That is not a valid username, try again !")
+        new_user()
     password = input("Enter the password: ")
     full_name = input("Enter the full name: ")
-    fav_color = input("What is {}'s favorite color? ".format(full_name))
+    fav_beer = input("What is {}'s favorite beer? ".format(full_name))
     date_created = datetime.datetime.now()
     formatted_date = date_created.strftime("%B %-d; %Y %-I:%M %p")  # make less friendly
 
-    user_input = "{},{},{},{},{}\n".format(username, password, full_name, fav_color, formatted_date)
+    user_input = "{},{},{},{},{}\n".format(username, password, full_name, fav_beer, formatted_date)
 
     # write to file
     with open("user_info.csv", "a") as outfile:
         outfile.write(user_input)
 
     print(" * New user created *")
-    login_or_create()
+    logout_or_create()
 
 
 def login():
     login_user_name = input("Username: ")
     login_password = input("Password: ")
 
-    with open("user_info.csv") as infile:
-        user_data = csv.DictReader(infile, fieldnames=["username", "password", "full_name", "fav_color", "date_created"])
-        # for user in user_data:
-        #     print(user["username"])
-        for user in user_data:
-            if login_user_name == user["username"]:
-                if login_password == user["password"]:
-                    print(user)
-                    logout_or_create()
-                else:
-                    print("1 * Not a valid entry *")
-                    welcome()
-        else:
-            print("2 * Not a valid entry *")
-            welcome()
+    if check_field(login_user_name, "username") and check_field(login_password, "password") is True:
+        print("tippie")
+        logout_or_create()
+    else:
+        print("0 ! Not a valid entry !")
+        welcome()
 
 
 def logout_or_create():
@@ -74,5 +62,4 @@ def logout_or_create():
         welcome()
 
 # welcome()
-# new_user()
 login()
