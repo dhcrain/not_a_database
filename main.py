@@ -13,7 +13,8 @@ def welcome():
 
 def check_field(name, field):
     with open("user_info.csv") as infile:
-        user_data = csv.DictReader(infile, fieldnames=["username", "password", "full_name", "fav_beer", "date_created"])
+        user_data = csv.DictReader(infile, fieldnames=[
+            "username", "password", "full_name", "fav_beer", "date_created"])
         for user in user_data:
             if name == user[field]:
                 return True
@@ -30,7 +31,7 @@ def new_user():
     full_name = input("Enter the full name: ")
     fav_beer = input("What is {}'s favorite beer? ".format(full_name))
     date_created = datetime.datetime.now()
-    formatted_date = date_created.strftime("%B %-d; %Y %-I:%M %p")  # make less friendly
+    formatted_date = date_created.strftime("%x %X")
 
     user_input = "{},{},{},{},{}\n".format(username, password, full_name, fav_beer, formatted_date)
 
@@ -47,10 +48,15 @@ def login():
     login_password = input("Password: ")
 
     if check_field(login_user_name, "username") and check_field(login_password, "password") is True:
-        print("tippie")
+        with open("user_info.csv") as infile:
+            user_data = csv.DictReader(infile, fieldnames=[
+                "username", "password", "full_name", "fav_beer", "date_created"])
+            for user in user_data:
+                if login_user_name == user["username"]:
+                    print(user)
         logout_or_create()
     else:
-        print("0 ! Not a valid entry !")
+        print(" ! Not a valid entry !")
         welcome()
 
 
@@ -61,5 +67,4 @@ def logout_or_create():
     else:
         welcome()
 
-# welcome()
-login()
+welcome()
