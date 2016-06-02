@@ -1,5 +1,6 @@
 import csv
 import datetime
+import os
 
 names_fields = ["username", "password", "full_name", "fav_beer", "date_created"]
 
@@ -70,12 +71,21 @@ def edit_user(username):
                     if choice == "1":
                         new_pw = input("Enter your new password: ")
                         user["password"] = new_pw
-                        # print(user)
+                        print(user)
 
-                        with open("user_info.csv", 'a') as outfile:
-                            writer = csv.DictWriter(outfile, fieldnames=["username", "password", "full_name", "fav_beer", "date_created"])
-                            print(writer)
-                            # writer.writerow(user)
+                        os.rename("user_info.csv", 'user_info.csv.bak')
+                        with open('user_info.csv.bak') as innfile, open("user_info.csv", 'w') as outfile:
+                            reader = csv.reader(innfile)
+                            writer = csv.writer(outfile)
+                            for row in reader:
+                                if not user(row):
+                                    writer.writerow(row)
+
+
+                        # with open("user_info.csv", 'a') as outfile:
+                        #     writer = csv.DictWriter(outfile, fieldnames=["username", "password", "full_name", "fav_beer", "date_created"])
+                            # print(str(writer))
+                        #     writer.writerow(user)
                             # edit_user()
                             # for line, row in enumerate(writer):
                             #     data = user.get(line, row)
